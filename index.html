@@ -15,10 +15,19 @@
       <p>Körperliche, emotionale und geistige Verfassung im 10-Tage-Verlauf</p>
     </header>
 
-    <div class="field">
-      <label for="birthdate">Geburtsdatum</label>
-      <input type="date" id="birthdate" autocomplete="bday">
-    </div>
+    <fieldset class="field date-group">
+  <legend>Geburtsdatum</legend>
+  <div class="date-selects">
+    <label class="sr-only" for="birthDay">Tag</label>
+    <select id="birthDay" aria-label="Tag"></select>
+
+    <label class="sr-only" for="birthMonth">Monat</label>
+    <select id="birthMonth" aria-label="Monat"></select>
+
+    <label class="sr-only" for="birthYear">Jahr</label>
+    <select id="birthYear" aria-label="Jahr"></select>
+  </div>
+</fieldset>
 
     <div class="chart-wrap">
       <canvas id="chart" role="img"

@@ -13,12 +13,18 @@
   ];
 
   const WEEKDAYS = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+  const MONTHS = [
+    'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+    'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'
+  ];
   const FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
 
   /* ============ DOM ============ */
   const canvas     = document.getElementById('chart');
   const ctx        = canvas.getContext('2d');
-  const birthInput = document.getElementById('birthdate');
+  const birthDay   = document.getElementById('birthDay');
+  const birthMonth = document.getElementById('birthMonth');
+  const birthYear  = document.getElementById('birthYear');
   const slider     = document.getElementById('slider');
   const rangeText  = document.getElementById('rangeText');
   const todayBtn   = document.getElementById('todayBtn');
@@ -75,6 +81,69 @@
   /* ============ Biorhythmus ============ */
   function biorhythm(days, period) {
     return Math.sin((2 * Math.PI * days) / period);
+  }
+
+  /* ============ Selects für Geburtsdatum ============ */
+  function populateSelects() {
+    // Tage 1–31
+    for (let d = 1; d <= 31; d++) {
+      const o = document.createElement('option');
+      o.value = d;
+      o.textContent = d;
+      birthDay.appendChild(o);
+    }
+
+    // Monate 1–12
+    MONTHS.forEach(function (name, i) {
+      const o = document.createElement('option');
+      o.value = i + 1;
+      o.textContent = name;
+      birthMonth.appendChild(o);
+    });
+
+    // Jahre: aktuelles Jahr rückwärts bis 1900
+    const thisYear = todayStart().getFullYear();
+    for (let y = thisYear; y >= 1900; y--) {
+      const o = document.createElement('option');
+      o.value = y;
+      o.textContent = y;
+      birthYear.appendChild(o);
+    }
+
+    // Default: leer
+    birthDay.value = '';
+    birthMonth.value = '';
+    birthYear.value = '';
+  }
+
+  function readBirthFromSelects() {
+    const d = parseInt(birthDay.value, 10);
+    const m = parseInt(birthMonth.value, 10);
+    const y = parseInt(birthYear.value, 10);
+
+    if (!d || !m || !y) return null;
+
+    // Prüfen, ob das Datum in dieser Kombination existiert
+    const date = new Date(y, m - 1, d);
+    if (
+      date.getFullYear() !== y ||
+      date.getMonth() !== m - 1 ||
+      date.getDate() !== d
+    ) {
+      return null;
+    }
+
+    // Keine Zukunft
+    if (date > todayStart()) return null;
+
+    return date;
+  }
+
+  function updateBirthFromSelects() {
+    const d = readBirthFromSelects();
+    birthDate = d;
+    saveBirthDate(d ? toISODate(d) : null);
+    refresh();
   }
 
   /* ============ Zeichnen ============ */
@@ -253,16 +322,8 @@
   }
 
   /* ============ Events ============ */
-  birthInput.addEventListener('change', function () {
-    const d = parseISODate(birthInput.value);
-    if (d) {
-      birthDate = d;
-      saveBirthDate(birthInput.value);
-    } else {
-      birthDate = null;
-      saveBirthDate(null);
-    }
-    refresh();
+  [birthDay, birthMonth, birthYear].forEach(function (el) {
+    el.addEventListener('change', updateBirthFromSelects);
   });
 
   slider.addEventListener('input', function () {
@@ -292,12 +353,14 @@
 
   /* ============ Start ============ */
   function init() {
-    birthInput.max = toISODate(todayStart());
+    populateSelects();
 
     const saved = loadBirthDate();
     if (saved) {
       birthDate = saved;
-      birthInput.value = toISODate(saved);
+      birthDay.value   = saved.getDate();
+      birthMonth.value = saved.getMonth() + 1;
+      birthYear.value  = saved.getFullYear();
     }
 
     slider.value = '0';
