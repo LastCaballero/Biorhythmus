@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eef2f7">
+  <title>Biorhythmus</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+
+    <header class="app-header">
+      <h1>Biorhythmus</h1>
+      <p>Körperliche, emotionale und geistige Verfassung im 10-Tage-Verlauf</p>
+    </header>
+
+    <div class="field">
+      <label for="birthdate">Geburtsdatum</label>
+      <input type="date" id="birthdate" autocomplete="bday">
+    </div>
+
+    <div class="chart-wrap">
+      <canvas id="chart" role="img"
+              aria-label="Liniendiagramm des Biorhythmus über 10 Tage"></canvas>
+    </div>
+
+    <ul class="legend">
+      <li class="legend-item">
+        <span class="dot" style="--c:#ef4444"></span>
+        <span>Physisch</span>
+        <b id="val-physical">–</b>
+      </li>
+      <li class="legend-item">
+        <span class="dot" style="--c:#3b82f6"></span>
+        <span>Emotional</span>
+        <b id="val-emotional">–</b>
+      </li>
+      <li class="legend-item">
+        <span class="dot" style="--c:#22c55e"></span>
+        <span>Intellektuell</span>
+        <b id="val-intellectual">–</b>
+      </li>
+    </ul>
+    <p class="legend-caption">Tageswerte für heute</p>
+
+    <div class="slider-block">
+      <div class="slider-head">
+        <span id="rangeText">–</span>
+        <button type="button" id="todayBtn" class="btn">Heute</button>
+      </div>
+      <input type="range" id="slider" min="-36" max="36" step="1" value="0"
+             aria-label="Zeitraum in 10-Tage-Schritten verschieben">
+    </div>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
